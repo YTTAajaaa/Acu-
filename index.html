@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ytta</title>
+  <style>
+    :root{
+      --bg1:#2a0b1a;
+      --bg2:#4a1230;
+      --card: rgba(255,255,255,0.14);
+      --card2: rgba(255,255,255,0.18);
+      --text:#fff6fb;
+      --muted: rgba(255,246,251,0.78);
+      --shadow: 0 20px 60px rgba(0,0,0,0.45);
+      --radius: 22px;
+      --yes:#22c55e;
+      --no:#ef4444;
+      --btn:#ffffff1a;
+      --stroke: rgba(255,255,255,0.22);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      background: radial-gradient(1200px 700px at 20% 0%, #ff4db644, transparent 55%),
+                  radial-gradient(900px 600px at 90% 20%, #ffb4d733, transparent 55%),
+                  linear-gradient(180deg, var(--bg1), var(--bg2));
+      display:grid;
+      place-items:center;
+      padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+    }
+
+    .particles{
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.9;
+    }
+
+    .app{
+      width:min(420px, 100%);
+      position: relative;
+      z-index: 1;
+    }
+
+    .card{
+      width:100%;
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+    }
+
+    .hidden{ display:none; }
+
+    .header{ display:flex; flex-direction:column; gap:10px; margin-bottom: 18px; }
+    .badge{
+      display:inline-flex;
+      align-self:flex-start;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #ffffff14;
+      border: 1px solid #ffffff22;
+      font-size: 12px;
+      letter-spacing: .3px;
+    }
+    .badge-ok{ background: #22c55e1a; border-color:#22c55e44; }
+    .badge-danger{ background: #ef44441a; border-color:#ef444444; }
+
+    .title{ margin:0; font-size: 26px; line-height:1.15; }
+    .subtitle{ margin:0; color: var(--muted); font-size: 14px; line-height:1.5; }
+
+    .form{ display:flex; flex-direction:column; gap: 10px; }
+    .label{ font-size: 12px; color: var(--muted); }
+    .input{
+      width:100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid #ffffff22;
+      background: #2a0b1a55;
+      color: var(--text);
+      outline: none;
+    }
+    .input:focus{ border-color:#7c8cff88; box-shadow: 0 0 0 4px #7c8cff22; }
+    .hint{ margin: 12px 0 0; color: #ffffff88; font-size: 12px; }
+
+    .actions{
+      display:flex;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .actions.final{
+      position: relative;
+      height: 120px;
+      align-items: flex-start;
+    }
+
+    .btn{
+      appearance:none;
+      border: 1px solid #ffffff22;
+      background: var(--btn);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: transform .12s ease, filter .12s ease, background .12s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .btn:active{ transform: scale(0.98); }
+
+    .btn-primary{
+      background: linear-gradient(180deg, #ff4db6, #ff2f7a);
+      border-color: #ff99cc88;
+    }
+
+    .btn-yes{
+      background: linear-gradient(180deg, #2ee66f, var(--yes));
+      border-color: #22c55e88;
+      flex: 1;
+    }
+
+    .btn-no{
+      background: linear-gradient(180deg, #ff6b6b, var(--no));
+      border-color: #ef444488;
+      flex: 1;
+    }
+
+    .actions.final .btn-yes{ position: absolute; left: 0; top: 0; width: 56%; transform-origin: left center; }
+    .actions.final .btn-no{ position: absolute; left: 58%; top: 0; width: 42%; }
+
+    .footer{ margin-top: 14px; display:flex; justify-content: space-between; }
+    .small{ font-size: 12px; color: #ffffff88; }
+
+    .photo-wrap{
+      margin-top: 12px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #ffffff2a;
+      background: #ffffff12;
+    }
+
+    .photo{
+      display:block;
+      width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles" class="particles" aria-hidden="true"></canvas>
+  <main class="app" id="app" aria-live="polite">
+    <section class="card" id="screen-name">
+      <div class="header">
+        <div class="badge">HAII ADEL ACUUU</div>
+        <h1 class="title">Haii</h1>
+        <p class="subtitle">Masukin nama kamu dulu ya</p>
+      </div>
+
+      <form id="name-form" class="form">
+        <label class="label" for="name-input">Nama</label>
+        <input id="name-input" class="input" type="text" inputmode="text" autocomplete="name" placeholder="contoh: adel" required />
+        <button class="btn btn-primary" type="submit">Lanjut</button>
+      </form>
+
+      <p class="hint" id="name-hint">*Huruf besar/kecil bebas.</p>
+    </section>
+
+    <section class="card hidden" id="screen-deny">
+      <div class="header">
+        <div class="badge badge-danger">Akses Ditolak</div>
+        <h2 class="title">Siapa sih kamu?</h2>
+        <p class="subtitle">Kok masuk ke file <b>adel acu</b>?</p>
+      </div>
+      <button class="btn" id="back-btn" type="button">Balik</button>
+    </section>
+
+    <section class="card hidden" id="screen-game">
+      <div class="header">
+        <div class="badge badge-ok" id="level-badge">Level 1</div>
+        <h2 class="title" id="question">...</h2>
+        <p class="subtitle" id="desc">Jawab jujur yaa</p>
+      </div>
+
+      <div class="actions" id="actions">
+        <button class="btn btn-yes" id="yes-btn" type="button">Yes</button>
+        <button class="btn btn-no" id="no-btn" type="button">No</button>
+      </div>
+
+      <div class="footer">
+        <div class="small" id="progress">0/0</div>
+      </div>
+    </section>
+
+    <section class="card hidden" id="screen-final">
+      <div class="header">
+        <div class="badge badge-ok">Happy Birthday</div>
+        <h2 class="title">Selamat ulang tahun, ADELL ACUUUU</h2>
+        <p class="subtitle">Semoga Adel selalu sehat, bahagia, dan semua yang diinginkan tercapai. jangan lupa kangen aku tapi "gengsi"</p>
+      </div>
+
+      <div class="photo-wrap">
+        <img class="photo" src="images/adel-birthday.png" alt="Happy Birthday Adel Acuu" />
+      </div>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="javascript:location.reload()">Ulang dari awal</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const screens = {
+      name: document.getElementById('screen-name'),
+      deny: document.getElementById('screen-deny'),
+      game: document.getElementById('screen-game'),
+      final: document.getElementById('screen-final'),
+    };
+
+    const nameForm = document.getElementById('name-form');
+    const nameInput = document.getElementById('name-input');
+    const backBtn = document.getElementById('back-btn');
+
+    const levelBadge = document.getElementById('level-badge');
+    const questionEl = document.getElementById('question');
+    const descEl = document.getElementById('desc');
+    const progressEl = document.getElementById('progress');
+
+    const actionsEl = document.getElementById('actions');
+    const yesBtn = document.getElementById('yes-btn');
+    const noBtn = document.getElementById('no-btn');
+
+    const normalizeName = (s) => (s || '').trim().toLowerCase();
+
+    function showScreen(which) {
+      for (const k of Object.keys(screens)) screens[k].classList.add('hidden');
+      screens[which].classList.remove('hidden');
+    }
+
+    const questions = [
+      { q: 'Siap main game kecil dulu?', d: 'Jawab jujur yaa.', mode: 'normal' },
+      { q: 'Adel orang baik nggak?', d: 'Jangan bohong.', mode: 'normal' },
+      { q: 'Terakhir...', d: 'Ini pertanyaan paling penting.', mode: 'normal' },
+      { q: 'Kamu kangen Aji gaa?', d: 'Kalau klik No, tombolnya bakal kabur.', mode: 'final' },
+    ];
+
+    let idx = 0;
+    let noClicks = 0;
+
+    function renderQuestion() {
+      const item = questions[idx];
+      levelBadge.textContent = `Level ${Math.min(idx + 1, questions.length)}`;
+      questionEl.textContent = item.q;
+      descEl.textContent = item.d;
+      progressEl.textContent = `${idx + 1}/${questions.length}`;
+
+      actionsEl.classList.toggle('final', item.mode === 'final');
+
+      if (item.mode === 'final') {
+        noBtn.classList.add('is-dodgy');
+        yesBtn.classList.add('is-growing');
+      } else {
+        noBtn.classList.remove('is-dodgy');
+        yesBtn.classList.remove('is-growing');
+        yesBtn.style.transform = '';
+        noBtn.style.left = '';
+        noBtn.style.top = '';
+      }
+    }
+
+    function nextQuestion() {
+      if (idx < questions.length - 1) {
+        idx += 1;
+        renderQuestion();
+        return;
+      }
+
+      showScreen('final');
+    }
+
+    nameForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = normalizeName(nameInput.value);
+      if (name !== 'adel') {
+        showScreen('deny');
+        return;
+      }
+
+      idx = 0;
+      noClicks = 0;
+      showScreen('game');
+      renderQuestion();
+    });
+
+    backBtn.addEventListener('click', () => {
+      nameInput.value = '';
+      nameInput.focus();
+      showScreen('name');
+    });
+
+    yesBtn.addEventListener('click', () => {
+      nextQuestion();
+    });
+
+    function dodgeNoButton() {
+      const item = questions[idx];
+      if (item.mode !== 'final') return;
+
+      noClicks += 1;
+
+      const container = actionsEl.getBoundingClientRect();
+      const btn = noBtn.getBoundingClientRect();
+
+      const maxX = Math.max(0, container.width - btn.width);
+      const maxY = Math.max(0, container.height - btn.height);
+      const x = Math.floor(Math.random() * (maxX + 1));
+      const y = Math.floor(Math.random() * (maxY + 1));
+
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+
+      const scale = Math.min(1 + noClicks * 0.18, 2.6);
+      yesBtn.style.transform = `scale(${scale})`;
+    }
+
+    noBtn.addEventListener('click', () => {
+      if (questions[idx].mode === 'final') {
+        dodgeNoButton();
+        return;
+      }
+      nextQuestion();
+    });
+
+    noBtn.addEventListener('mouseenter', dodgeNoButton);
+    noBtn.addEventListener('touchstart', (e) => {
+      if (questions[idx].mode === 'final') {
+        e.preventDefault();
+        dodgeNoButton();
+      }
+    }, { passive: false });
+
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+
+    const spriteHeart = new Image();
+    spriteHeart.decoding = 'async';
+    spriteHeart.src = 'images/particle-heart.jpg';
+
+    const spriteFlower = new Image();
+    spriteFlower.decoding = 'async';
+    spriteFlower.src = 'images/particle-flower.jpg';
+
+    function resizeCanvas() {
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    const particles = [];
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+
+    function makeParticle() {
+      const type = Math.random() < 0.62 ? 'heart' : 'flower';
+      return {
+        type,
+        x: rand(0, window.innerWidth),
+        y: window.innerHeight + rand(10, 120),
+        r: rand(7, 16),
+        vy: rand(0.45, 1.35),
+        vx: rand(-0.35, 0.35),
+        rot: rand(0, Math.PI * 2),
+        vr: rand(-0.02, 0.02),
+        a: rand(0.35, 0.85),
+      };
+    }
+
+    function drawHeart(x, y, s, rot, alpha) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rot);
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = 'rgba(255, 77, 166, 1)';
+      ctx.beginPath();
+      ctx.moveTo(0, s * 0.32);
+      ctx.bezierCurveTo(0, -s * 0.25, -s * 0.55, -s * 0.18, -s * 0.55, s * 0.2);
+      ctx.bezierCurveTo(-s * 0.55, s * 0.62, -s * 0.1, s * 0.85, 0, s);
+      ctx.bezierCurveTo(s * 0.1, s * 0.85, s * 0.55, s * 0.62, s * 0.55, s * 0.2);
+      ctx.bezierCurveTo(s * 0.55, -s * 0.18, 0, -s * 0.25, 0, s * 0.32);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawFlower(x, y, s, rot, alpha) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rot);
+      ctx.globalAlpha = alpha;
+      for (let i = 0; i < 6; i++) {
+        ctx.rotate(Math.PI / 3);
+        ctx.fillStyle = 'rgba(255, 182, 213, 1)';
+        ctx.beginPath();
+        ctx.ellipse(0, -s * 0.55, s * 0.32, s * 0.55, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = 'rgba(255, 227, 102, 1)';
+      ctx.beginPath();
+      ctx.arc(0, 0, s * 0.22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawSprite(img, x, y, s, rot, alpha) {
+      if (!img || !img.complete || img.naturalWidth === 0) return false;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(rot);
+      ctx.globalAlpha = alpha;
+      ctx.drawImage(img, -s, -s, s * 2, s * 2);
+      ctx.restore();
+      return true;
+    }
+
+    function tick() {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      while (particles.length < 42) particles.push(makeParticle());
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.y -= p.vy;
+        p.x += p.vx;
+        p.rot += p.vr;
+
+        if (p.type === 'heart') {
+          const ok = drawSprite(spriteHeart, p.x, p.y, p.r, p.rot, p.a);
+          if (!ok) drawHeart(p.x, p.y, p.r, p.rot, p.a);
+        } else {
+          const ok = drawSprite(spriteFlower, p.x, p.y, p.r, p.rot, p.a);
+          if (!ok) drawFlower(p.x, p.y, p.r, p.rot, p.a);
+        }
+
+        if (p.y < -120) particles.splice(i, 1);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+    });
+
+    resizeCanvas();
+    tick();
+
+    showScreen('name');
+    setTimeout(() => nameInput?.focus(), 250);
+  </script>
+</body>
+</html>
